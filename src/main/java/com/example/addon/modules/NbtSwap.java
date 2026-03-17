@@ -10,8 +10,7 @@ import net.minecraft.recipe.book.RecipeBookCategory;
 
 public class NbtSwap extends Module {
     public NbtSwap() {
-        // We use §6 for a gold/gingerbread color in the menu
-        super(Categories.Misc, "nbt-swap", "§6Gingerbread §fExperimental Packet Race.");
+        super(Categories.Misc, "nbt-swap", "Attempts to race packets for a Command Block.");
     }
 
     @Override
@@ -21,18 +20,14 @@ public class NbtSwap extends Module {
             return;
         }
 
-        // 1. Send the Survival "Gate" Packet (Recipe Book)
-        mc.getNetworkHandler().sendPacket(new RecipeCategoryOptionsC2SPacket(
-            RecipeBookCategory.CRAFTING, true, true
-        ));
+        // Packet 1: The 'Bypass' packet
+        mc.getNetworkHandler().sendPacket(new RecipeCategoryOptionsC2SPacket(RecipeBookCategory.CRAFTING, true, true));
 
-        // 2. The NBT Request (Command Block into Hotbar Slot 1 / index 36)
-        ItemStack commandBlock = new ItemStack(Items.COMMAND_BLOCK);
-        mc.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(36, commandBlock));
+        // Packet 2: The Command Block Request
+        // Slot 36 is the first slot of your hotbar
+        mc.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(36, new ItemStack(Items.COMMAND_BLOCK)));
 
-        info("§6[Gingerbread] §fSent swap packets. Check hotbar slot 1.");
-        
-        // Auto-disable so it doesn't spam
-        toggle();
+        info("Packets sent. If it worked, check your first hotbar slot.");
+        toggle(); // Turns itself off immediately
     }
 }
